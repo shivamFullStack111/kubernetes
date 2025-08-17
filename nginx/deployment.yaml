@@ -1,0 +1,25 @@
+apiVersion: apps/v1                # API version for Deployment
+kind: Deployment                   # Resource type = Deployment
+
+metadata:
+  name: nginx-deployment           # Name of the Deployment
+  namespace: nginx                 # Namespace where it will run
+
+spec:
+  replicas: 3                      # Create and maintain 3 Pod replicas
+
+  selector:                        # Which Pods this Deployment should manage
+    matchLabels:                   # It looks for Pods with specific labels
+      app: nginx                   # Only Pods having "app=nginx" label will be managed
+
+  template:                        # Blueprint for Pods created by Deployment
+    metadata:
+      labels:                      # Labels added to Pods when they are created
+        app: nginx                 # This must match the selector above (app=nginx)
+
+    spec:                               # Specification of the Pod (inside Deployment)
+      containers:                       # List of containers inside each Pod
+        - name: nginx              # Container name
+          image: nginx:latest      # Docker image from Docker Hub
+          ports:
+            - containerPort: 80    # Expose port 80 inside container
