@@ -1,0 +1,21 @@
+# ----------------stage 1 (builder stage)--------------------
+FROM node:22-alpine AS my-backend                                  # Small base image (Alpine Linux) for build
+
+WORKDIR /app                                                       # Workdir set to /app inside container
+
+COPY package*.json ./                                              # Copy only package.json + package-lock.json first
+
+RUN npm install                                                    # Install dependencies
+
+COPY . .                                                           # Copy rest of the app (source code, index.js etc.)
+
+ # ------------------stage 2 (final stage)---------------------
+FROM node:22-slim                                                  # Slim base image (lighter than full node)
+
+WORKDIR /app                                                       # Workdir again set to /app
+
+COPY --from=my-backend /app .                                      # Copy compiled/installed app from stage 1
+
+EXPOSE 8000                                                        # Container exposes port 8000 (for backend API)
+
+CMD [ "node", "index.js" ]                                         # Start backend server

@@ -1,0 +1,50 @@
+# -------------------- Deployment --------------------
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: multicontainer                                                 # Deployment ka naam (unique in namespace)
+spec: 
+  selector:
+    matchLabels:
+      app: multicontainer                                              # Ye label select karega pod ko (Service is label pe depend karegi)
+  template: 
+    metadata:
+      labels:
+        app: multicontainer                                            # Pod ko ye label milega (Service yahi label dhundhegi)
+    spec: 
+      containers:
+        - name: my-backend                                             # Container 1: Backend (Node.js app)
+          image: shivamfullstack111/node-backend:1                                   # Docker Hub se backend image
+          ports: 
+            - containerPort: 8000                                      # Backend container port
+
+        - name: mongodb                                                # Container 2: MongoDB
+          image: mongo                                                 # Official MongoDB image
+          ports:
+            - containerPort: 27017                                     # MongoDB default port
+
+---
+
+# -------------------- Service --------------------
+apiVersion: v1 
+kind: Service 
+metadata:
+  name: multicontainer-service                                         # Service ka naam (pods se connect karne ke liye)
+spec:
+  selector: 
+    app: multicontainer                                                # Is selector ke through Service Pod dhoondhegi
+                                                                       # Ye label Deployment -> Pod template me match hona chahiye
+
+  ports: 
+    - name: backend
+      protocol: TCP 
+      port: 8000                                                       # Service ka port (cluster ke andar expose hoga)
+      targetPort: 8000                                                 # Pod ke backend container ka port
+
+    - name: database
+      protocol: TCP 
+      port: 27017                                                      # Service ka port (cluster ke andar)
+      targetPort: 27017                                                # Pod ke mongodb container ka port
+
+  type: LoadBalancer                                                   # Service ka type (LoadBalancer/NodePort/ClusterIP)
+                                                                       # Minikube me ye NodePort banega
