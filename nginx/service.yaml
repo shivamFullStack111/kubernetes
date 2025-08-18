@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx                   # Service name → must be unique within the namespace
+  namespace: nginx              # Namespace → must match the Deployment namespace
+
+spec:
+  selector:                     # Service uses selector to find Pods it should send traffic to
+    app: nginx                  # Looks for Pods with label "app=nginx"
+                                # (This matches the label in Deployment’s Pod template)
+
+  ports:                        # Defines how traffic flows from Service → Pods
+    - port: 80                  # Service port (cluster-internal entry point for clients)
+                                # Example: Another Pod calls http://nginx:80
+                                
+      targetPort: 80            # Container port inside the Pod
+                                # Traffic is forwarded from Service port → this container port
+                                # Must match containerPort defined in Deployment (nginx listens on 80 by default)
