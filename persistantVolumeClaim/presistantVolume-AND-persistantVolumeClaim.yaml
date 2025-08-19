@@ -1,0 +1,47 @@
+apiVersion: v1                                                    # Kubernetes resource ka version, v1 means stable core API
+kind: PersistentVolume                                            # Resource type → actual physical storage ka representation
+metadata:
+  name: mongo-pv                                                  # Unique name cluster me, PVC iske sath bind hoga
+spec:
+  capacity:
+    storage: 1Gi                                                  # Total storage jo ye PV provide karega → 1 Gigabyte
+ 
+  volumeMode: Filesystem                                           # Volume mode → kaunsa type ka storage (Filesystem ya Block)
+ 
+  accessModes:
+    - ReadWriteOnce                                               # Kaun kaun access kar sakta hai:          # RWO → sirf 1 node ya pod write kar sakta hai, multiple read kar sakte hain
+  
+  persistentVolumeReclaimPolicy: Retain                            # Jab PVC delete ho jaye, PV kya kare:       # Retain → data bacha rahega, delete nahi hoga        # Delete → PV aur data dono delete ho jaayenge
+  
+  storageClassName: standard                                       # StorageClass define karta hai provisioner aur policies
+ 
+  hostPath:                                                        # Ye type ka PV node ke local storage pe hai
+    path: /data/mongodb-data                                       # Node( minikube VM ) ke is path me actual data store hoga
+    type: DirectoryOrCreate                                         # Agar path exist nahi karta, to create kar do
+
+
+--- 
+
+
+# -------------------persistentVolumeClaim------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# persistent volume clain mtlb jo mongodb volume use krega tab vo persistentVolume mese kitni resources request krega jese hamne upper 1Gi-> 1gb diya he 
+
+
+apiVersion: v1
+kind: PersistentVolumeClaim                                       # Pod ke liye storage ka request
+metadata:
+  name: mongo-pvc                                                 # PVC ka unique name, pod ke deployment me claimName se reference hoga
+spec:
+  resources:
+    requests:
+      storage: 1Gi                                                # Pod kitna storage chahiye → 1GB
+ 
+  volumeMode: Filesystem                                           # Filesystem mode chahiye (PV ke volumeMode se match hona chahiye)
+ 
+  accessModes:
+    - ReadWriteOnce                                               # Pod ka access mode PV ke saath match hona chahiye
+
+
+
+# now next step after create persistentVolumeClaim use in mongodb-deployment file 

@@ -1,0 +1,7 @@
+apiVersion: v1 
+kind: ConfigMap 
+metadata: 
+  name: my-config-for-env
+data: 
+  MONGO_HOST: mongodb-service                           # value of MONGO_HOST must be same as the name of mongo service which is created in mongo-deployment-yaml file
+  MONGO_PORT: "27017"                                    # default port of mongo 27017

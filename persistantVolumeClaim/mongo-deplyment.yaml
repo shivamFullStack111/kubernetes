@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: mongodb-deployment
+spec:
+ 
+  selector:
+    matchLabels:
+      app: mongodb-pod                                             # must match with pod name 
+ 
+  template:
+    metadata:
+      labels:
+        app: mongodb-pod          
+
+    spec:
+      containers:
+        - name: mongodb-container 
+          image: mongo:latest
+          volumeMounts:
+            - mountPath: /data/db                                       # Container ke andar path jaha MongoDB data store karega
+              name: mongo-storage                                       # Ye volume ka reference, same as defined in 'volumes' below
+
+      volumes:
+       - name: mongo-storage                                            # Volume ka unique name, jisse container mount karta hai
+         persistentVolumeClaim:
+          claimName: mongo-pvc                                          # PVC ka exact name, jisse ye volume bind hota hai
+        
+--- 
+
+# ---------------------Service for mongo deployment------------------------- 
+
+apiVersion: v1 
+kind: Service 
+metadata:
+  name: mongodb-service
+spec: 
+
+  selector:
+    app: mongodb-pod                                              # match with monodb pod name
+  
+  ports: 
+  - protocol: TCP
+    port: 27017 
+    targetPort: 27017 
+  type: NodePort                                                 # this is necessory for minikube service
+
