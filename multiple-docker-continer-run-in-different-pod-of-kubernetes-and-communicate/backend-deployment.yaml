@@ -1,0 +1,49 @@
+apiVersion: apps/v1 
+kind: Deployment 
+metadata:
+  name: my-backend-deployment
+spec:
+
+  selector:
+    matchLabels:
+      app: my-backend-pod                        # must match with pod name which is declare below -> template.metadata.labels.app="my-backend-pod"
+  
+  template:
+    metadata:
+      labels:
+        app: my-backend-pod
+   
+    spec:
+      containers:
+        - name: my-backend-container 
+          image: shivamfullstack111/node-backend:v3
+          env:
+            - name: MONGO_HOST                                                        # env variable name in backend app 
+              valueFrom:
+                configMapKeyRef:                                                   # require value using configMap key 
+                  name: my-config-for-env                                             # must match with name of configMap that are create configMap.yaml
+                  key: MONGO_HOST                                                     # key which you want from configMap 
+            
+            - name: MONGO_PORT                                                         
+              valueFrom:
+                configMapKeyRef:
+                  name: my-config-for-env                                            
+                  key: MONGO_PORT   
+
+--- 
+
+# ---------------------service for backend---------------------------
+apiVersion: v1
+kind: Service 
+metadata:
+  name: backend-service 
+spec: 
+
+  selector:
+    app: my-backend-pod                                   # must match with backend pod name 
+  
+  ports:
+  - protocol: TCP 
+    port: 8000
+    targetPort: 8000
+  type: NodePort                                          # this is necessory for minikube service
