@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mycronjob
+spec:
+  schedule: "* * * * *"        # Runs every minute
+  jobTemplate:
+    metadata:
+      name: mycronjob
+    spec:
+      template:
+        spec:
+          containers:
+          - name: hello
+            image: busybox:1.28
+            command: 
+            - sh
+            - -c
+            - echo "Hello from the Kubernetes cluster" && sleep 500     # Keep the container alive for 3 minutes so we can exec into it
+          restartPolicy: OnFailure
