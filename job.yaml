@@ -1,0 +1,27 @@
+apiVersion: batch/v1                  # Kubernetes API group → Jobs belong to batch/v1
+kind: Job                             # Resource type → creates a Job
+
+metadata:
+  name: myjob                         # Name of the Job (must be unique in the namespace)
+
+spec:                                 # Job specification
+  parallelism: 1                      # Only 1 Pod will run at a time
+  completions: 1                      # Job is considered complete after 1 successful Pod run
+
+  template:                            # Pod template created by the Job
+    spec:
+      containers:                      # List of containers inside the Pod
+      - name: myjob-container          # Container name (must be lowercase, alphanumeric, or '-')
+        image: busybox                 # Lightweight Linux image with basic shell commands
+        command:                        # Override default container command
+          - sh                         # Run shell
+          - -c                         # "-c" means "execute the following string as a single command"
+          - |                          # Multi-line string in YAML (each line is executed sequentially)
+            touch /tmp/myFile          # Create a file inside the container
+            echo "File created!"       # Optional log message
+            sleep 300                  # Keep the container alive for 5 minutes so we can exec into it
+      restartPolicy: Never             # Do not restart container if it fails; Job controller will create new Pod if needed
+
+
+
+# kubectl exec -it myjob-4qs6h -- /bin/sh          command to exec this job's pod because busybox use sh 
