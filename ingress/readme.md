@@ -88,101 +88,113 @@ kubectl get svc -n my-ingress
 ## 4.1 NGINX App
 
 ```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-name: nginx-deployment
-spec:
-selector:
-matchLabels:
-app: nginx-pod
-template:
-metadata:
-labels:
-app: nginx-pod
-spec:
-containers:
-- name: nginx
-image: nginx:latest
-ports:
-- containerPort: 80
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: nginx-deployment 
+spec: 
+  selector:
+    matchLabels:
+      app: nginx-pod 
+  template:
+    metadata:
+      labels:
+        app: nginx-pod 
+    spec:
+      containers:
+        - name: nginx 
+          image: nginx:latest 
+          ports:
+            - containerPort: 80 
 
-apiVersion: v1
-kind: Service
-metadata:
-name: nginx-service
-spec:
-selector:
-app: nginx-pod
-ports:
 
-port: 80
-targetPort: 80
-type: ClusterIP
+--- 
+
+
+apiVersion: v1 
+kind: Service 
+metadata: 
+  name: nginx-service 
+spec:
+  selector:
+    app: nginx-pod      # must match with pod labels 
+  ports:
+    - port: 80 
+      targetPort: 80 
+      protocol: TCP
+  type: ClusterIP             # this type only work within the cluster 
 ```
 ## 4.2 Website2 App (React Example)
 
 ```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-name: website2-deployment
-spec:
-selector:
-matchLabels:
-app: website2-pod
-template:
-metadata:
-labels:
-app: website2-pod
-spec:
-containers:
-- name: website2
-image: shivamfullstack111/react-app-test:v6
-ports:
-- containerPort: 5173
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: website2-deployment 
+spec: 
+  selector:
+    matchLabels:
+      app: website2-pod 
+  template:
+    metadata:
+      labels:
+        app: website2-pod 
+    spec:
+      containers:
+        - name: website2 
+          image: shivamfullstack111/react-app-test:v6 
+          ports:
+            - containerPort: 5173
 
-apiVersion: v1
-kind: Service
-metadata:
-name: website2-service
-spec:
-selector:
-app: website2-pod
-ports:
+--- 
 
-port: 5173
-targetPort: 5173
-type: ClusterIP
+apiVersion: v1 
+kind: Service 
+metadata: 
+  name: website2-service 
+spec:
+  selector:
+    app: website2-pod      # must match with pod labels 
+  ports:
+    - port: 5173 
+      targetPort: 5173 
+      protocol: TCP
+  type: ClusterIP             # this type only work within the cluster 
 ```
 # 5. Ingress Resource
 
 ```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: networking.k8s.io/v1                                            # API version. "networking.k8s.io/v1" is the current stable version for Ingress resources.
+kind: Ingress                                                               # Resource type. Ingress is used to route external HTTP/S traffic to internal services.
 metadata:
-name: example-ingress
-annotations:
-nginx.ingress.kubernetes.io/rewrite-target: /
+  name: example-ingress                                                     # Name of this Ingress resource. Must be unique in the namespace.
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /    # Special instruction for NGINX ingress controller.   # It rewrites the URL path before sending it to backend services.  # Example: if user visits "/nginx", the backend will receive "/".
+    
 spec:
-ingressClassName: nginx
-rules:
-- http:
-paths:
-- path: /
-pathType: Prefix
-backend:
-service:
-name: website2-service
-port:
-number: 5173
-- path: /nginx
-pathType: Prefix
-backend:
-service:
-name: nginx-service
-port:
-number: 80
+  ingressClassName: nginx                                                    # Specifies which ingress controller should handle this Ingress. # Here "nginx" means NGINX Ingress Controller.
+ 
+  rules:                                                                     # Defines how incoming HTTP requests should be routed.
+    - http:                                                                  # HTTP rules (can have multiple hosts if needed)
+        paths:                                                               # List of path-based rules.
+          - path: /                                                          # Path to match incoming requests. "/" means the root path.
+            pathType: Prefix                                                 # "Prefix" means all URLs starting with "/" will match.
+            backend:                                                         # Where to send the traffic if this path matches.
+              service:
+                name: website2-service                                           # The Kubernetes Service name to forward traffic to.
+                port:
+                  number: 5173                                                   # The port of the service that should receive traffic.   # Must match the port exposed by the Service.
+
+    - http:
+        paths:
+          - path: /nginx                                                      # Path to match "/nginx" for NGINX application.
+            pathType: Prefix                                                  # Match all requests that start with "/nginx".
+            backend:
+              service:
+                name: nginx-service                                           # Kubernetes Service name for NGINX app.
+                port:
+                  number: 80                                                  # Port on which NGINX Service is exposed inside the cluster.
+
 ```
 > Note: / routes to website2-service
 > Note: /nginx routes to nginx-service
