@@ -24,17 +24,17 @@ It allows accessing multiple services using a single IP or domain.
 minikube start
 
 - Starts a local Kubernetes cluster using Minikube.
-
-## Step 2.2: Enable Ingress Addon
 ```
+## Step 2.2: Enable Ingress Addon
+
 
 ```bash
 minikube addons enable ingress
 
 - Enables the NGINX ingress controller in your Minikube cluster.
-
-## Step 2.3: Verify Ingress Controller
 ```
+## Step 2.3: Verify Ingress Controller
+
 
 ```bash
 kubectl get pods -n ingress-nginx
@@ -56,7 +56,7 @@ ingress-nginx-controller-admission-xxxx 1/1 Running 0 1m
 minikube status
 minikube stop
 minikube start
-
+```
 # 3. Namespace
 
 ## 3.1 Default Namespace
@@ -64,12 +64,12 @@ minikube start
 - By default, all resources are deployed in the default namespace.
 - View all resources in default namespace:
 
-```
+
 ```bash
 kubectl get all
-
-## 3.2 Create a Custom Namespace
 ```
+## 3.2 Create a Custom Namespace
+
 ```bash
 kubectl create namespace my-ingress
 ```
