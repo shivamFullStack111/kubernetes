@@ -26,6 +26,7 @@ minikube start
 - Starts a local Kubernetes cluster using Minikube.
 
 ## Step 2.2: Enable Ingress Addon
+```
 
 ```bash
 minikube addons enable ingress
@@ -33,11 +34,14 @@ minikube addons enable ingress
 - Enables the NGINX ingress controller in your Minikube cluster.
 
 ## Step 2.3: Verify Ingress Controller
+```
 
 ```bash
 kubectl get pods -n ingress-nginx
 
 Expected output:
+
+```
 
 ```text
 NAME READY STATUS RESTARTS AGE
@@ -46,6 +50,7 @@ ingress-nginx-controller-admission-xxxx 1/1 Running 0 1m
 
 > Note: The ingress-nginx namespace contains all ingress controller pods.
 > Note: If pods are not running, check Minikube status or restart the cluster:
+```
 
 ```bash
 minikube status
@@ -59,24 +64,25 @@ minikube start
 - By default, all resources are deployed in the default namespace.
 - View all resources in default namespace:
 
+```
 ```bash
 kubectl get all
 
 ## 3.2 Create a Custom Namespace
-
+```
 ```bash
 kubectl create namespace my-ingress
-
+```
 ```bash
 kubectl apply -f deployment.yaml -n my-ingress
-
+```
 > Note: Using a separate namespace helps isolate ingress and apps.
 > Note: Always check that resources are created in the intended namespace:
 
 ```bash
 kubectl get pods -n my-ingress
 kubectl get svc -n my-ingress
-
+```
 # 4. Deployment & Service Examples
 
 ## 4.1 NGINX App
@@ -113,7 +119,7 @@ ports:
 port: 80
 targetPort: 80
 type: ClusterIP
-
+```
 ## 4.2 Website2 App (React Example)
 
 ```yaml
@@ -148,7 +154,7 @@ ports:
 port: 5173
 targetPort: 5173
 type: ClusterIP
-
+```
 # 5. Ingress Resource
 
 ```yaml
@@ -177,7 +183,7 @@ service:
 name: nginx-service
 port:
 number: 80
-
+```
 > Note: / routes to website2-service
 > Note: /nginx routes to nginx-service
 > Note: rewrite-target: / ensures requests to /nginx are forwarded correctly
@@ -188,27 +194,13 @@ number: 80
 kubectl apply -f nginx-deployment.yaml
 kubectl apply -f website2-deployment.yaml
 kubectl apply -f example-ingress.yaml
-
+```
 # 7. Accessing Ingress
 
 ## Using Minikube IP
 
 - http://<minikube-ip>/ -> website2 app
 - http://<minikube-ip>/nginx -> nginx app
-
-## Optional: Using Custom Domain
-
-```bash
-sudo nano /etc/hosts
-
-Add:
-
-<minikube-ip> myapp.local
-
-- http://myapp.local/
- -> website2
-- http://myapp.local/nginx
- -> nginx
 
 # 8. Debugging & Logs
 
@@ -218,7 +210,7 @@ kubectl describe ingress example-ingress
 kubectl get svc
 kubectl get endpoints
 kubectl logs -n ingress-nginx deploy/ingress-nginx-controller
-
+```
 # 9. Common Issues
 
 - 404 Not Found on /nginx -> Add annotation rewrite-target: /
@@ -238,7 +230,7 @@ kubectl get svc
 kubectl get endpoints
 kubectl logs -n ingress-nginx deploy/ingress-nginx-controller
 minikube tunnel
-
+```
 # 11. Notes
 
 - ClusterIP service type is sufficient for Ingress
