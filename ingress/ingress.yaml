@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1                                            # API version. "networking.k8s.io/v1" is the current stable version for Ingress resources.
+kind: Ingress                                                               # Resource type. Ingress is used to route external HTTP/S traffic to internal services.
+metadata:
+  name: example-ingress                                                     # Name of this Ingress resource. Must be unique in the namespace.
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /    # Special instruction for NGINX ingress controller.   # It rewrites the URL path before sending it to backend services.  # Example: if user visits "/nginx", the backend will receive "/".
+    
+spec:
+  ingressClassName: nginx                                                    # Specifies which ingress controller should handle this Ingress. # Here "nginx" means NGINX Ingress Controller.
+ 
+  rules:                                                                     # Defines how incoming HTTP requests should be routed.
+    - http:                                                                  # HTTP rules (can have multiple hosts if needed)
+        paths:                                                               # List of path-based rules.
+          - path: /                                                          # Path to match incoming requests. "/" means the root path.
+            pathType: Prefix                                                 # "Prefix" means all URLs starting with "/" will match.
+            backend:                                                         # Where to send the traffic if this path matches.
+              service:
+                name: website2-service                                           # The Kubernetes Service name to forward traffic to.
+                port:
+                  number: 5173                                                   # The port of the service that should receive traffic.   # Must match the port exposed by the Service.
+
+    - http:
+        paths:
+          - path: /nginx                                                      # Path to match "/nginx" for NGINX application.
+            pathType: Prefix                                                  # Match all requests that start with "/nginx".
+            backend:
+              service:
+                name: nginx-service                                           # Kubernetes Service name for NGINX app.
+                port:
+                  number: 80                                                  # Port on which NGINX Service is exposed inside the cluster.
