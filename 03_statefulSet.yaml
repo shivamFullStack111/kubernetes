@@ -34,19 +34,24 @@ spec:
         resources:
           requests:
             storage: 1Gi               # Each pod gets 1Gi storage that does not delete if pod restarts
-      
 
 --- 
-
 apiVersion: v1 
 kind: Service 
 metadata:
   name: mysql-statefulset-service
 spec:
+  clusterIP: None                     # Setting "None" means this will be a Headless Service
+                                      # Headless Service does NOT get a single cluster IP
+                                      # Instead, it directly exposes each Pod's own IP/DNS name
+                                      # Example: mysql-statefulset-deployment-0.mysql-statefulset-service
+                                      #          mysql-statefulset-deployment-1.mysql-statefulset-service
+                                      # This is very useful for StatefulSets (like databases)
+                                      # where every Pod must be accessed individually by service name, not via one IP
   selector:
-    app: mysql-statefulset-pod         # This service sends traffic to all pods with this label
+    app: mysql-statefulset-pod        # This service targets all Pods with this label
   ports:  
     - protocol: TCP 
-      port: 3306                       # Service port inside the cluster
-      targetPort: 3306                 # Maps to container port in pods
-  type: NodePort                       # Makes MySQL accessible outside Minikube
+      port: 3306                      # Service port (inside cluster)
+      targetPort: 3306                # Container port in Pods
+  type: NodePort                      # Makes MySQL reachable from outside (like Minikube node)
