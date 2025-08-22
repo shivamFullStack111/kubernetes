@@ -4,7 +4,6 @@ metadata:
   name: example-ingress                                                     # Name of this Ingress resource. Must be unique in the namespace.
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /    # Special instruction for NGINX ingress controller.   # It rewrites the URL path before sending it to backend services.  # Example: if user visits "/nginx", the backend will receive "/".
-    
 spec:
   ingressClassName: nginx                                                    # Specifies which ingress controller should handle this Ingress. # Here "nginx" means NGINX Ingress Controller.
  

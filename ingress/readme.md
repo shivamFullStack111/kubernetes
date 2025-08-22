@@ -26,6 +26,7 @@ minikube start
 - Starts a local Kubernetes cluster using Minikube.
 ```
 ## Step 2.2: Enable Ingress Addon
+```
 
 
 ```bash
@@ -34,6 +35,7 @@ minikube addons enable ingress
 - Enables the NGINX ingress controller in your Minikube cluster.
 ```
 ## Step 2.3: Verify Ingress Controller
+```
 
 
 ```bash
@@ -64,12 +66,16 @@ minikube start
 - By default, all resources are deployed in the default namespace.
 - View all resources in default namespace:
 
+<<<<<<< HEAD
 
+=======
+```
+>>>>>>> 1979d9d (statefulSets: create 5 replicas of mysql using statefulSets each pod of mysql assigned a unique name start from 0 to n-1 of replicas)
 ```bash
 kubectl get all
 ```
 ## 3.2 Create a Custom Namespace
-
+```
 ```bash
 kubectl create namespace my-ingress
 ```
@@ -116,6 +122,7 @@ kind: Service
 metadata: 
   name: nginx-service 
 spec:
+<<<<<<< HEAD
   selector:
     app: nginx-pod      # must match with pod labels 
   ports:
@@ -123,6 +130,15 @@ spec:
       targetPort: 80 
       protocol: TCP
   type: ClusterIP             # this type only work within the cluster 
+=======
+selector:
+app: nginx-pod
+ports:
+
+port: 80
+targetPort: 80
+type: ClusterIP
+>>>>>>> 1979d9d (statefulSets: create 5 replicas of mysql using statefulSets each pod of mysql assigned a unique name start from 0 to n-1 of replicas)
 ```
 ## 4.2 Website2 App (React Example)
 
@@ -153,6 +169,7 @@ kind: Service
 metadata: 
   name: website2-service 
 spec:
+<<<<<<< HEAD
   selector:
     app: website2-pod      # must match with pod labels 
   ports:
@@ -160,6 +177,15 @@ spec:
       targetPort: 5173 
       protocol: TCP
   type: ClusterIP             # this type only work within the cluster 
+=======
+selector:
+app: website2-pod
+ports:
+
+port: 5173
+targetPort: 5173
+type: ClusterIP
+>>>>>>> 1979d9d (statefulSets: create 5 replicas of mysql using statefulSets each pod of mysql assigned a unique name start from 0 to n-1 of replicas)
 ```
 # 5. Ingress Resource
 
@@ -172,6 +198,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /    # Special instruction for NGINX ingress controller.   # It rewrites the URL path before sending it to backend services.  # Example: if user visits "/nginx", the backend will receive "/".
     
 spec:
+<<<<<<< HEAD
   ingressClassName: nginx                                                    # Specifies which ingress controller should handle this Ingress. # Here "nginx" means NGINX Ingress Controller.
  
   rules:                                                                     # Defines how incoming HTTP requests should be routed.
@@ -195,6 +222,26 @@ spec:
                 port:
                   number: 80                                                  # Port on which NGINX Service is exposed inside the cluster.
 
+=======
+ingressClassName: nginx
+rules:
+- http:
+paths:
+- path: /
+pathType: Prefix
+backend:
+service:
+name: website2-service
+port:
+number: 5173
+- path: /nginx
+pathType: Prefix
+backend:
+service:
+name: nginx-service
+port:
+number: 80
+>>>>>>> 1979d9d (statefulSets: create 5 replicas of mysql using statefulSets each pod of mysql assigned a unique name start from 0 to n-1 of replicas)
 ```
 > Note: / routes to website2-service
 > Note: /nginx routes to nginx-service

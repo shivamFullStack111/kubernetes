@@ -1,0 +1,52 @@
+apiVersion: apps/v1 
+kind: StatefulSet
+metadata: 
+  name: mysql-statefulset-deployment   # Name of the StatefulSet (used to manage pods + storage)
+spec: 
+  replicas: 5                          # This will create 5 pods, each with a fixed name: 
+                                       # mysql-statefulset-deployment-0 ... -4
+  selector:
+    matchLabels:
+      app: mysql-statefulset-pod       # This label must match the pod template below
+  template:
+    metadata:
+      labels:
+        app: mysql-statefulset-pod     # All pods created will have this label
+    spec:
+      containers:
+        - name: mysql-statefulset-container
+          image: mysql:9.4
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: agdtyuimnb        # Root password (same for every pod here)
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: mysql-volume       # Each pod will mount its own separate volume here
+  volumeClaimTemplates:                # Special feature of StatefulSet: creates one PVC per pod
+    - metadata:
+        name: mysql-volume             # PVC name gets auto-suffixed:
+                                       # mysql-volume-mysql-statefulset-deployment-0, -1, etc.
+      spec:
+        accessModes:
+          - ReadWriteOnce              # Each PVC can only be used by one pod (good for databases)
+        resources:
+          requests:
+            storage: 1Gi               # Each pod gets 1Gi storage that does not delete if pod restarts
+      
+
+--- 
+
+apiVersion: v1 
+kind: Service 
+metadata:
+  name: mysql-statefulset-service
+spec:
+  selector:
+    app: mysql-statefulset-pod         # This service sends traffic to all pods with this label
+  ports:  
+    - protocol: TCP 
+      port: 3306                       # Service port inside the cluster
+      targetPort: 3306                 # Maps to container port in pods
+  type: NodePort                       # Makes MySQL accessible outside Minikube
