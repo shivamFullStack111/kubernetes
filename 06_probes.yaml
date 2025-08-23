@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec: 
+  replicas: 1                                      # Number of pods to run
+  selector:
+    matchLabels:
+      app: nginx-pod
+  template:
+    metadata:
+      labels:
+        app: nginx-pod
+    spec:
+      containers:
+      - name: nginx-pod
+        image: nginx
+        ports:
+        - containerPort: 80                                      # The port nginx listens on
+
+        resources:
+          limits:                                              # Maximum CPU and Memory pod can use
+            cpu: "100m"                                       # 0.1 CPU cores max
+            memory: "1Gi"                                     # 1 GB RAM max
+          requests:                                            # Minimum CPU and Memory pod asks from node
+            cpu: "100m"
+            memory: "1Gi"
+
+        readinessProbe:                                       # ✅ Checks if the pod is ready to serve traffic.                                        # If it fails, Kubernetes stops sending traffic to this pod.                                         # Does NOT restart the pod. Only controls traffic routing.
+          httpGet:
+            path: /                                           # HTTP path to check if pod is ready
+            port: 80
+          initialDelaySeconds: 5                                      # Wait 5 sec after pod starts before first check
+          periodSeconds: 5                                            # Check every 5 sec
+          timeoutSeconds: 2                                           # Wait max 2 sec for response
+          failureThreshold: 3                                         # If fails 3 consecutive times → pod marked NOT ready
+          successThreshold: 1                                         # Only 1 successful check needed → pod marked ready
+
+        livenessProbe:                                        # ✅ Checks if the pod is alive and not stuck/hanged.                                        # If it fails repeatedly, Kubernetes restarts the pod automatically.
+          httpGet:
+            path: /                                           # HTTP path to check if pod is alive
+            port: 80
+          initialDelaySeconds: 10                                      # Wait 10 sec after pod starts before first check
+          periodSeconds: 10                                            # Check every 10 sec
+          timeoutSeconds: 2                                            # Wait max 2 sec for response
+          failureThreshold: 3                                          # If fails 3 consecutive times → pod will be restarted
+
+        startupProbe:                                         # ✅ Checks if the pod has successfully started.                                       # Useful for slow-starting apps. Disables liveness probe until startup is complete.                                        # If fails, pod is restarted.
+          httpGet:
+            path: /                                           # HTTP path to check if pod has started successfully
+            port: 80
+          periodSeconds: 5                                              # Check every 5 sec
+          failureThreshold: 10                                          # Maximum 50 sec (5*10) to start
+          
+          
+
+
+
+
+          
+          # Note: initialDelaySeconds is not needed for startup probe
+
+
+          # to check all probes result describe pod
+          # CMD: kubectl describe pod <podName> 
