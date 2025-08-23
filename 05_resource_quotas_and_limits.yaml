@@ -1,0 +1,26 @@
+apiVersion: apps/v1 
+kind: Deployment 
+metadata:
+  name: nginx-deployment 
+spec:
+  selector:
+    matchLabels:
+      app: nginx-pod 
+  template: 
+    metadata:
+      labels:
+        app: nginx-pod
+    spec:
+      containers:
+        - name: nginx-container 
+          image: nginx 
+          ports:
+            - containerPort: 80 
+
+          resources:
+            requests:
+              memory: "1Gi"   # Minimum memory guaranteed for this container. Kubernetes ensures at least 1Gi memory is available for it.
+              cpu: "100m"     # Minimum CPU guaranteed. "100m" means 0.1 CPU core. Container will always get this much CPU if needed.
+            limits:
+              memory: "5Gi"   # Maximum memory this container can use. If it tries to use more than 5Gi, it may be killed by Kubernetes.
+              cpu: "500m"     # Maximum CPU allowed. "500m" means 0.5 CPU core. Container cannot use more than this CPU even if free CPU is available.
