@@ -39,11 +39,3 @@ spec:
     targetPort: 80
 
 
-# -------------------------------------BASIC COMMANDS ------------------------------------
-
-# kubectl apply -f hpa.yaml                                             # Apply HPA manifest file and create HPA
-# kubectl get hpa                                                       # Get list of all HPA resources
-# kubectl describe hpa <hpa-name>                                       # Show detailed info of HPA (scaling rules, metrics, events)
-# kubectl get hpa -w                                                    # Watch HPA in real-time (see replicas changing live)
-# kubectl scale deployment nginx-deployment --replicas=5                     # Manually scale deployment (for testing)
-# kubectl delete hpa <hpa-name>                                         # Delete HPA resource
