@@ -1,0 +1,21 @@
+apiVersion: autoscaling/v2                                         # We are using version v2 of HPA (latest features supported)
+kind: HorizontalPodAutoscaler                                      # This object is an HPA (Horizontal Pod Autoscaler)
+metadata:
+  name: ngix-autoscaler                                             # Name of the HPA
+
+spec:
+  scaleTargetRef:                                                   # Which resource should this HPA scale?
+    apiVersion: apps/v1                                             # Version of the target resource (Deployment API version)
+    kind: Deployment                                                # Type of target (Deployment here)
+    name: nginx-deployment                                          # Name of the target Deployment (nginx-deployment)
+
+  minReplicas: 1                                                    # Minimum number of Pods (will never go below this)
+  maxReplicas: 5                                                    # Maximum number of Pods (will never go above this)
+
+  metrics:                                                          # Which metric should be used for scaling?
+  - type: Resource                                                  # Using resource metric (like CPU/Memory)
+    resource:
+      name: cpu                                                     # Scaling based on CPU usage
+      target:
+        type: Utilization                                           # Target is CPU utilization percentage
+        averageUtilization: 3                                       # Target CPU usage (3% is too small, usually 50-80% is used)
