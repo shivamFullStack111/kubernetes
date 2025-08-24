@@ -1,0 +1,19 @@
+# NOTE: VPA is not by default in kubernetes we have to install it using Guide in github REPO:           https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler
+
+
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: nginx-autoscaler
+spec: 
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment 
+    name: nginx-deployment
+  updatePolicy:
+    updateMode: "Auto"        # Auto → VPA will automatically adjust CPU/Memory for pods and restart them if needed.
+                              # Off → VPA will only give recommendations, but will not change anything.
+                              # Initial → VPA will set CPU/Memory only when a new pod is created, not after.
+
+
+

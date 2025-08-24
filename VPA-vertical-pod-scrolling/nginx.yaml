@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: nginx-deployment 
+spec: 
+  selector:
+    matchLabels:
+      app: nginx-pod 
+  template:
+    metadata:
+      labels:
+        app: nginx-pod 
+        name: nginx-pod
+    spec:   
+      containers: 
+        - name: nginx-container 
+          image: nginx 
+          ports:  
+            - containerPort: 80 
+          resources:                        # Mandatory for horizontal scaling 
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+
+--- 
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx-pod
+  ports:
+  - port: 80
+    targetPort: 80
+
+
