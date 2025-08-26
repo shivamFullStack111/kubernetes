@@ -178,7 +178,7 @@ kubectl get pods -n rbac-namespace
 
 ```bash
 kubectl delete pod test-pod \
-  --as*system:serviceaccount:rbac-namespace:service-account-1 \
+  --as=system:serviceaccount:rbac-namespace:service-account-1 \
   -n rbac-namespace
 ```
 
