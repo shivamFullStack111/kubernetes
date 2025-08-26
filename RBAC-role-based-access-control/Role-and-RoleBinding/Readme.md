@@ -119,27 +119,27 @@ kubectl auth can-i get pod --as=system:serviceaccount:<namespace>:<serviceaccoun
 ```bash
 # Can the ServiceAccount GET pods?
 kubectl auth can-i get pods \
-  --as*system:serviceaccount:rbac-namespace:service-account-1 \
+  --as=system:serviceaccount:rbac-namespace:service-account-1 \
   -n rbac-namespace
 
 # Can the ServiceAccount LIST pods?
 kubectl auth can-i list pods \
-  --as*system:serviceaccount:rbac-namespace:service-account-1 \
+  --as=system:serviceaccount:rbac-namespace:service-account-1 \
   -n rbac-namespace
 
 # Can the ServiceAccount WATCH pods?
 kubectl auth can-i watch pods \
-  --as*system:serviceaccount:rbac-namespace:service-account-1 \
+  --as=system:serviceaccount:rbac-namespace:service-account-1 \
   -n rbac-namespace
 
 # Can the ServiceAccount DELETE pods?
 kubectl auth can-i delete pods \
-  --as*system:serviceaccount:rbac-namespace:service-account-1 \
+  --as=system:serviceaccount:rbac-namespace:service-account-1 \
   -n rbac-namespace
 
 # Negative test (should return "no"): CREATE is NOT granted
 kubectl auth can-i create pods \
-  --as*system:serviceaccount:rbac-namespace:service-account-1 \
+  --as=system:serviceaccount:rbac-namespace:service-account-1 \
   -n rbac-namespace
 ```
 
