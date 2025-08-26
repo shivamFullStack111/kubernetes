@@ -3,10 +3,10 @@ kind: CustomResourceDefinition        # We are saying: "I want to create a new C
 metadata:
   name: databases.shivam.dev          # The full name of this CRD. 
                                       # It must always be: <plural>.<group> → here "databases.shivam.dev"
-
 spec:                                 # This part tells Kubernetes how our new CRD should work
   group: shivam.dev                   # The API group name. Later we will use it like: shivam.dev/v1
   scope: Namespaced                   # Means this CRD will live inside namespaces (not cluster-wide)
+ 
   names:                              # Names used to identify this CRD
     singular: database                # Single form → e.g. "kubectl get database"
     plural: databases                 # Plural form → e.g. "kubectl get databases"
@@ -17,6 +17,7 @@ spec:                                 # This part tells Kubernetes how our new C
     - name: v1                        # Version name (so full API will be "shivam.dev/v1")
       served: true                    # true → This version can be used by users
       storage: true                   # true → This version is saved in etcd (the main storage version)
+     
       schema:                         # Schema defines what fields are allowed and what type they are
         openAPIV3Schema:              # Schema follows OpenAPI v3 rules
           type: object                # The top level CRD object is of type "object"
