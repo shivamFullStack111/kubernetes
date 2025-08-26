@@ -1,0 +1,15 @@
+
+# ------------------- (4) RoleBinding -------------------
+apiVersion: rbac.authorization.k8s.io/v1   # API group for RBAC
+kind: RoleBinding                          # RoleBinding = connects Role to a User/Group/ServiceAccount
+metadata:
+  name: pod-full-access-bindTo-service-account-1   # Name of the RoleBinding
+  namespace: rbac-namespace               # RoleBinding belongs to rbac-namespace
+subjects:                                 # Who will get this Role’s permissions
+  - kind: ServiceAccount                  # VERY IMPORTANT: must be "ServiceAccount" not "User"
+    name: service-account-1               # Name of the ServiceAccount we created above
+    namespace: rbac-namespace             # Namespace of the ServiceAccount
+roleRef:                                  # Which Role is being attached to the subject
+  apiGroup: rbac.authorization.k8s.io     # API group where Role exists
+  kind: Role                              # We are binding a "Role" (not ClusterRole)
+  name: pod-full-access                   # Exact Role name (must match above Role)

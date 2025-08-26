@@ -1,0 +1,7 @@
+# ------------------- (1) Namespace -------------------
+apiVersion: v1                      # API version for namespace resources is always "v1"
+kind: Namespace                     # We are creating a Namespace object
+metadata:                           # Metadata means identifying information about the object
+  name: rbac-namespace              # Name of the namespace (this is like a folder to keep objects separate)
+                                    # All roles, rolebindings, and serviceaccounts will be inside this namespace
+

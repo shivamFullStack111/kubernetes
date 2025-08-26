@@ -1,0 +1,17 @@
+# ------------------- (2) Role -------------------
+apiVersion: rbac.authorization.k8s.io/v1   # API group for RBAC (Role-Based Access Control)
+kind: Role                                # Role = permissions for resources inside ONE namespace
+metadata:
+  name: pod-full-access                   # Name of the Role
+  namespace: rbac-namespace               # Role is created in the "rbac-namespace"
+rules:                                    # List of rules (what access this role gives)
+  - apiGroups: [""]                       # Empty string "" means "core API group" (where pods, services, etc. live)
+                                          # Common mistake: if you write "rbac.authorization.k8s.io" here, pods won’t work
+    resources: ["pods"]                   # This Role will give access to Pods resource
+    verbs: ["get","watch","list","delete"] # Actions allowed on pods:
+                                          # get    = view details of a pod
+                                          # watch  = keep track of changes in pods (used by controllers)
+                                          # list   = see all pods
+                                          # delete = remove a pod
+                                          # (we did NOT give create or update access here)
+
