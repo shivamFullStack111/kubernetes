@@ -1,0 +1,9 @@
+apiVersion: shivam.dev/v1         # Use the group and version from the CRD (shivam.dev, version v1)
+kind: Database                    # Kind must match the "kind" you defined in the CRD → Database
+metadata:
+  name: students-database         # Name of this custom resource (like naming a Pod or Deployment)
+
+spec:                             # Spec is where we give the details (fields) defined in the CRD
+  DB_ROOT_PASS: addjhbfjnkm       # Root password for the database (string type, from CRD)
+  replicas: 3                     # Number of replicas (integer type, from CRD)
+  DB_NAME: students               # Name of the database (string type, from CRD)

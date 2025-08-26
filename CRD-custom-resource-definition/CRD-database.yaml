@@ -1,0 +1,32 @@
+apiVersion: apiextensions.k8s.io/v1   # The API group and version that lets us create CRDs (always this for CRDs)
+kind: CustomResourceDefinition        # We are saying: "I want to create a new CRD type"
+metadata:
+  name: databases.shivam.dev          # The full name of this CRD. 
+                                      # It must always be: <plural>.<group> → here "databases.shivam.dev"
+
+spec:                                 # This part tells Kubernetes how our new CRD should work
+  group: shivam.dev                   # The API group name. Later we will use it like: shivam.dev/v1
+  scope: Namespaced                   # Means this CRD will live inside namespaces (not cluster-wide)
+  names:                              # Names used to identify this CRD
+    singular: database                # Single form → e.g. "kubectl get database"
+    plural: databases                 # Plural form → e.g. "kubectl get databases"
+    kind: Database                    # The "Kind" (like Pod, Service, Deployment). Here it’s "Database"
+    shortNames: ["db"]                # Short name so we can type "kubectl get db" instead of full word
+
+  versions:                           # We can define one or more versions of our CRD
+    - name: v1                        # Version name (so full API will be "shivam.dev/v1")
+      served: true                    # true → This version can be used by users
+      storage: true                   # true → This version is saved in etcd (the main storage version)
+      schema:                         # Schema defines what fields are allowed and what type they are
+        openAPIV3Schema:              # Schema follows OpenAPI v3 rules
+          type: object                # The top level CRD object is of type "object"
+          properties:                 # Define allowed fields inside this object
+            spec:                     # Every CR usually has a "spec" section (desired state)
+              type: object            # Spec is an object with its own fields
+              properties:             # Here we define what fields are allowed in spec
+                DB_NAME:              # First field: DB_NAME
+                  type: string        # It must be a string (e.g. "mydb")
+                replicas:             # Second field: replicas
+                  type: integer       # It must be an integer (e.g. 3)
+                DB_ROOT_PASS:         # Third field: DB_ROOT_PASS
+                  type: string        # It must be a string (e.g. "mypassword")
