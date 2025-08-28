@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata: 
+  name: nginx-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-pod 
+  template:
+    metadata:
+      labels:
+        app: nginx-pod
+    spec:
+
+      initContainers:              # Init containers run before main containers
+        - name: busybox            # Name of the init container
+          image: busybox           # Using busybox image (lightweight tool image)
+          command:                 # Command to run inside init container
+          - sh                     # Run shell
+          - -c                     # Pass the command string to shell
+          - |                      # Multi-line script starts     # Keep trying to find "my-database" service   # Print message while waiting      # Wait 2 seconds before next try     # Exit loop once database is found
+            until nslookup my-database; do     
+              echo "waiting for connection..."
+              sleep 2                         
+            done                              
+
+      containers:                   # this container will create after the successful create and exit init container
+        - name: nginx 
+          image: nginx 
+          ports:
+            - containerPort: 80
+
+
+
+
+# ----------------------------CHECK INIT CONTAINER LOGS-----------------------------------
+
+# COMMAND:     kubectl logs <pod-name> -c <container-name>
+
+# -c for container because in same pod multiple container can run 
