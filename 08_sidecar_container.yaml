@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-with-sidecar
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      ports:
+        - containerPort: 80
+      volumeMounts:
+        - name: shared-logs
+          mountPath: /var/log/nginx   # Nginx logs stored here
+
+    - name: log-shipper
+      image: busybox
+      command: ["sh", "-c", "tail -n+1 -f /var/log/nginx/access.log"]
+      # Command explanation:
+      #  - tail = read file content
+      #  - -n+1 = start reading from first line
+      #  - -f   = follow the file continuously (stream logs in real-time)
+      # So this container keeps reading Nginx access logs continuously
+      volumeMounts:
+        - name: shared-logs
+          mountPath: /var/log/nginx   # Same logs folder mounted
+
+  volumes:
+    - name: shared-logs
+      emptyDir: {}   # Shared volume between both containers
+
+
+# ===========================
+# 📌 Basic Commands to Use
+# ===========================
+
+# 1. Get all pods (check pod status)
+# --------------------------
+# kubectl get pods
+
+# 2. Describe pod (detailed info + events)
+# --------------------------
+# kubectl describe pod nginx-with-sidecar
+
+# 3. See logs of main container (nginx)
+# --------------------------
+# kubectl logs nginx-with-sidecar -c nginx
+
+# 4. See logs of sidecar container (log-shipper)
+# --------------------------
+# kubectl logs nginx-with-sidecar -c log-shipper
+
+# 5. Exec into main container (nginx)
+# --------------------------
+# kubectl exec -it nginx-with-sidecar -c nginx -- sh
+
+# 6. Exec into sidecar container (log-shipper)
+# --------------------------
+# kubectl exec -it nginx-with-sidecar -c log-shipper -- sh
+
+# 7. Inside nginx container, check logs file manually
+# --------------------------
+# cat /var/log/nginx/access.log
+
+# 8. Inside sidecar container, also check logs (shared volume)
+# --------------------------
+# cat /var/log/nginx/access.log
+
+# 9. List files in log directory (for debugging)
+# --------------------------
+# ls -l /var/log/nginx/
