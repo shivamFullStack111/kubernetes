@@ -1,0 +1,51 @@
+apiVersion: apps/v1 
+kind: Deployment 
+metadata:
+  name: frontend-deployment 
+  namespace: todo-app
+spec:
+  selector:
+    matchLabels:
+      app: frontend-pod
+  template:
+    metadata:
+      labels:
+        app: frontend-pod 
+    spec:
+      containers:
+        - name: todo-frontend
+          image: shivamfullstack111/todo-frontend:v3
+          ports:
+            - containerPort: 5173 
+          env:
+            - name: VITE_BACKEND_URL
+              valueFrom:
+                secretKeyRef:
+                  key: VITE_BACKEND_URL
+                  name: todo-secret
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+
+
+
+---
+
+apiVersion: v1 
+kind: Service 
+metadata:
+  name: frontend-service 
+  namespace: todo-app
+spec:
+  selector:
+    app: frontend-pod
+  ports:  
+    - port: 5173
+      targetPort: 5173
+  type: ClusterIP
+
+

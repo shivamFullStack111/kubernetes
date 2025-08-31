@@ -1,0 +1,35 @@
+# persistent volume 
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: todo-pv
+  namespace: todo-app
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: standard
+  hostPath:
+    path: /data/todo-mongodb-data/
+    type: DirectoryOrCreate
+
+
+---
+
+# persistent volume claim 
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: todo-pvc
+  namespace: todo-app
+spec:
+  resources:
+    requests:
+      storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
