@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: todo-frontend
-          image: shivamfullstack111/todo-frontend:v3
+          image: shivamfullstack111/todo-frontend:v8
           ports:
             - containerPort: 5173 
           env:
